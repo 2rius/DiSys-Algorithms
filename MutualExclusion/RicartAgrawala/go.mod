@@ -1,4 +1,4 @@
-module github.com/mfoman/go-ass-4
+module github.com/2rius/DiSys-Algorithms/tree/main/MutualExclusion/RicartAgrawala
 
 go 1.17
 
