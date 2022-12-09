@@ -17,5 +17,5 @@ Linearisable implies sequentially consistent, but sequentially consistent doesn'
 Add logical clock timestamps (Lamport/Vector) to frontends/managers.
 
 ### Make linearisable
-Add synchronization algorithm (Christian's/Berkeley) to frontends/managers.
+Add clock synchronization algorithm (Christian's/Berkeley) to frontends/managers.
 
