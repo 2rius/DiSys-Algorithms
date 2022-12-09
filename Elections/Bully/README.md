@@ -1,0 +1,6 @@
+# Bully
+
+## How to run
+1. Setup 3 terminal instances in the directory
+2. Run `go run .` on each instance. Each terminals last printed line should be "I am connected to 2 clients".
+3. Press enter in any instance to start an election.

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package Bully;
+option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/Elections/Bully/grpc;Bully";
+
+service Peer {
+    rpc Election (Elect) returns (Ack) {}
+    rpc Coordinate (Coord) returns (Ack) {}
+}
+
+message Elect {}
+
+message Coord {
+    uint32 id = 1;
+}
+
+message Ack {}
