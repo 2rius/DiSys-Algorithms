@@ -4,7 +4,7 @@ package RicartAgrawala;
 option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/MutualExclusion/RicartAgrawala/grpc;RicartAgrawala";
 
 
-service DistributedMutualExclusion {
+service RicartAgrawala {
     rpc request (Request) returns (RequestBack) {}
     rpc reply (Reply) returns (ReplyBack) {}
 }

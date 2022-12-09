@@ -18,123 +18,122 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// DistributedMutualExclusionClient is the client API for DistributedMutualExclusion service.
+// RicartAgrawalaClient is the client API for RicartAgrawala service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type DistributedMutualExclusionClient interface {
+type RicartAgrawalaClient interface {
 	Request(ctx context.Context, in *Request, opts ...grpc.CallOption) (*RequestBack, error)
 	Reply(ctx context.Context, in *Reply, opts ...grpc.CallOption) (*ReplyBack, error)
 }
 
-type distributedMutualExclusionClient struct {
+type ricartAgrawalaClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewDistributedMutualExclusionClient(cc grpc.ClientConnInterface) DistributedMutualExclusionClient {
-	return &distributedMutualExclusionClient{cc}
+func NewRicartAgrawalaClient(cc grpc.ClientConnInterface) RicartAgrawalaClient {
+	return &ricartAgrawalaClient{cc}
 }
 
-func (c *distributedMutualExclusionClient) Request(ctx context.Context, in *Request, opts ...grpc.CallOption) (*RequestBack, error) {
+func (c *ricartAgrawalaClient) Request(ctx context.Context, in *Request, opts ...grpc.CallOption) (*RequestBack, error) {
 	out := new(RequestBack)
-	err := c.cc.Invoke(ctx, "/RicartAgrawala.DistributedMutualExclusion/request", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/RicartAgrawala.RicartAgrawala/request", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *distributedMutualExclusionClient) Reply(ctx context.Context, in *Reply, opts ...grpc.CallOption) (*ReplyBack, error) {
+func (c *ricartAgrawalaClient) Reply(ctx context.Context, in *Reply, opts ...grpc.CallOption) (*ReplyBack, error) {
 	out := new(ReplyBack)
-	err := c.cc.Invoke(ctx, "/RicartAgrawala.DistributedMutualExclusion/reply", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/RicartAgrawala.RicartAgrawala/reply", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// DistributedMutualExclusionServer is the server API for DistributedMutualExclusion service.
-// All implementations must embed UnimplementedDistributedMutualExclusionServer
+// RicartAgrawalaServer is the server API for RicartAgrawala service.
+// All implementations must embed UnimplementedRicartAgrawalaServer
 // for forward compatibility
-type DistributedMutualExclusionServer interface {
+type RicartAgrawalaServer interface {
 	Request(context.Context, *Request) (*RequestBack, error)
 	Reply(context.Context, *Reply) (*ReplyBack, error)
-	mustEmbedUnimplementedDistributedMutualExclusionServer()
+	mustEmbedUnimplementedRicartAgrawalaServer()
 }
 
-// UnimplementedDistributedMutualExclusionServer must be embedded to have forward compatible implementations.
-type UnimplementedDistributedMutualExclusionServer struct {
+// UnimplementedRicartAgrawalaServer must be embedded to have forward compatible implementations.
+type UnimplementedRicartAgrawalaServer struct {
 }
 
-func (UnimplementedDistributedMutualExclusionServer) Request(context.Context, *Request) (*RequestBack, error) {
+func (UnimplementedRicartAgrawalaServer) Request(context.Context, *Request) (*RequestBack, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Request not implemented")
 }
-func (UnimplementedDistributedMutualExclusionServer) Reply(context.Context, *Reply) (*ReplyBack, error) {
+func (UnimplementedRicartAgrawalaServer) Reply(context.Context, *Reply) (*ReplyBack, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Reply not implemented")
 }
-func (UnimplementedDistributedMutualExclusionServer) mustEmbedUnimplementedDistributedMutualExclusionServer() {
-}
+func (UnimplementedRicartAgrawalaServer) mustEmbedUnimplementedRicartAgrawalaServer() {}
 
-// UnsafeDistributedMutualExclusionServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to DistributedMutualExclusionServer will
+// UnsafeRicartAgrawalaServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to RicartAgrawalaServer will
 // result in compilation errors.
-type UnsafeDistributedMutualExclusionServer interface {
-	mustEmbedUnimplementedDistributedMutualExclusionServer()
+type UnsafeRicartAgrawalaServer interface {
+	mustEmbedUnimplementedRicartAgrawalaServer()
 }
 
-func RegisterDistributedMutualExclusionServer(s grpc.ServiceRegistrar, srv DistributedMutualExclusionServer) {
-	s.RegisterService(&DistributedMutualExclusion_ServiceDesc, srv)
+func RegisterRicartAgrawalaServer(s grpc.ServiceRegistrar, srv RicartAgrawalaServer) {
+	s.RegisterService(&RicartAgrawala_ServiceDesc, srv)
 }
 
-func _DistributedMutualExclusion_Request_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RicartAgrawala_Request_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DistributedMutualExclusionServer).Request(ctx, in)
+		return srv.(RicartAgrawalaServer).Request(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/RicartAgrawala.DistributedMutualExclusion/request",
+		FullMethod: "/RicartAgrawala.RicartAgrawala/request",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DistributedMutualExclusionServer).Request(ctx, req.(*Request))
+		return srv.(RicartAgrawalaServer).Request(ctx, req.(*Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DistributedMutualExclusion_Reply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RicartAgrawala_Reply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Reply)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DistributedMutualExclusionServer).Reply(ctx, in)
+		return srv.(RicartAgrawalaServer).Reply(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/RicartAgrawala.DistributedMutualExclusion/reply",
+		FullMethod: "/RicartAgrawala.RicartAgrawala/reply",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DistributedMutualExclusionServer).Reply(ctx, req.(*Reply))
+		return srv.(RicartAgrawalaServer).Reply(ctx, req.(*Reply))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// DistributedMutualExclusion_ServiceDesc is the grpc.ServiceDesc for DistributedMutualExclusion service.
+// RicartAgrawala_ServiceDesc is the grpc.ServiceDesc for RicartAgrawala service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var DistributedMutualExclusion_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "RicartAgrawala.DistributedMutualExclusion",
-	HandlerType: (*DistributedMutualExclusionServer)(nil),
+var RicartAgrawala_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "RicartAgrawala.RicartAgrawala",
+	HandlerType: (*RicartAgrawalaServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "request",
-			Handler:    _DistributedMutualExclusion_Request_Handler,
+			Handler:    _RicartAgrawala_Request_Handler,
 		},
 		{
 			MethodName: "reply",
-			Handler:    _DistributedMutualExclusion_Reply_Handler,
+			Handler:    _RicartAgrawala_Reply_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

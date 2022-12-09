@@ -1,5 +1,7 @@
 package main
 
+// From assignment 4
+
 import (
 	"bufio"
 	"context"
@@ -27,9 +29,9 @@ const (
 var port = flag.Int("port", 5000, "port")
 
 type peer struct {
-	api.UnimplementedDistributedMutualExclusionServer
+	api.UnimplementedRicartAgrawalaServer
 	id           uint32
-	clients      map[uint32]api.DistributedMutualExclusionClient
+	clients      map[uint32]api.RicartAgrawalaClient
 	defered      []uint32
 	ctx          context.Context
 	state        STATE
@@ -40,15 +42,18 @@ type peer struct {
 
 func (p *peer) incrementClock() {
 	p.mu.Lock()
+	defer p.mu.Unlock()
 	p.clock++
-	p.mu.Unlock()
 }
 
-func LamportMax(a, b uint32) uint32 {
-	if a > b {
-		return a + 1
+func (p *peer) LamportMax(x uint32) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if p.clock > x {
+		p.clock++
+	} else {
+		p.clock = x + 1
 	}
-	return b + 1
 }
 
 func (p *peer) Request(ctx context.Context, req *api.Request) (*api.RequestBack, error) {
@@ -66,9 +71,7 @@ func (p *peer) Request(ctx context.Context, req *api.Request) (*api.RequestBack,
 		log.Printf("(L: %d) Deferring request from %v\n", p.clock, req.Id)
 		p.defered = append(p.defered, req.Id)
 
-		p.mu.Lock()
-		p.clock = LamportMax(p.clock, req.Clock)
-		p.mu.Unlock()
+		p.LamportMax(req.Clock)
 	} else {
 		if p.state == WANTED {
 			p.requestsSent++
@@ -98,9 +101,7 @@ func (p *peer) Reply(ctx context.Context, req *api.Reply) (*api.ReplyBack, error
 			i wait for next reply
 	*/
 
-	p.mu.Lock()
-	p.clock = LamportMax(p.clock, req.Clock)
-	p.mu.Unlock()
+	p.LamportMax(req.Clock)
 
 	p.requestsSent--
 	log.Printf("(L: %d) RECV: Got a reply. Missing %d replies.\n", p.clock, p.requestsSent)
@@ -219,7 +220,7 @@ func main() {
 
 	p := &peer{
 		id:           port,
-		clients:      make(map[uint32]api.DistributedMutualExclusionClient),
+		clients:      make(map[uint32]api.RicartAgrawalaClient),
 		defered:      make([]uint32, 0),
 		ctx:          ctx,
 		state:        RELEASED,
@@ -230,7 +231,7 @@ func main() {
 	log.Printf("Opened on port: %d\n", p.id)
 
 	grpcServer := grpc.NewServer()
-	api.RegisterDistributedMutualExclusionServer(grpcServer, p)
+	api.RegisterRicartAgrawalaServer(grpcServer, p)
 
 	go func() {
 		if err := grpcServer.Serve(list); err != nil {
@@ -255,7 +256,7 @@ func main() {
 
 		defer conn.Close()
 		log.Printf("Succes connecting to: %v\n", peerPort)
-		c := api.NewDistributedMutualExclusionClient(conn)
+		c := api.NewRicartAgrawalaClient(conn)
 		p.clients[peerPort] = c
 	}
 
