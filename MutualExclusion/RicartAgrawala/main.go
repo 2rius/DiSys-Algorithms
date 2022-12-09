@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	api "https://github.com/2rius/DiSys-Algorithms/tree/main/Mutual-Exclusion/Ricart-Agrawala"
+	api "github.com/2rius/DiSys-Algorithms/tree/main/MutualExclusion/RicartAgrawala"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
