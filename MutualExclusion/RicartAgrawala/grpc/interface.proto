@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package RicartAgrawala;
-option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/MutualExclusion/RicartAgrawala/proto;RicartAgrawala";
+option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/MutualExclusion/RicartAgrawala/grpc;RicartAgrawala";
 
 
 service DistributedMutualExclusion {
