@@ -6,9 +6,9 @@ option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/Replica
 
 service Manager {
     rpc Heartbeat (Void) returns (Void) {}
-    rpc Update (Data) returns (Void) {}
+    rpc Update (UpdateData) returns (Void) {}
 
-    rpc Set (Data) returns (Void) {}
+    rpc Set (Value) returns (Void) {}
     rpc Get (Void) returns (Data) {}
 
     rpc Election (Elect) returns (Void) {}
@@ -27,13 +27,20 @@ message Coord {
 
 message Primary {}
 
+message UpdateData {
+    string key = 1;
+    string value = 2;
+    repeated string frontends = 3;
+}
+
+message Value {
+    string key = 1;
+    string value = 2;
+}
+
 message Data {
-    uint32 lclock = 1;
-    string a = 2;
-    string b = 3;
-    string c = 4;
+    map<string, string> data = 1;
 }
 
 message Void {
-    uint32 lclock = 1;
 }

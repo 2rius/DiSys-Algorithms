@@ -23,8 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
 	Heartbeat(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Void, error)
-	Update(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Void, error)
-	Set(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Void, error)
+	Update(ctx context.Context, in *UpdateData, opts ...grpc.CallOption) (*Void, error)
+	Set(ctx context.Context, in *Value, opts ...grpc.CallOption) (*Void, error)
 	Get(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Data, error)
 	Election(ctx context.Context, in *Elect, opts ...grpc.CallOption) (*Void, error)
 	Coordinate(ctx context.Context, in *Coord, opts ...grpc.CallOption) (*Void, error)
@@ -47,7 +47,7 @@ func (c *managerClient) Heartbeat(ctx context.Context, in *Void, opts ...grpc.Ca
 	return out, nil
 }
 
-func (c *managerClient) Update(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Void, error) {
+func (c *managerClient) Update(ctx context.Context, in *UpdateData, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
 	err := c.cc.Invoke(ctx, "/manager.Manager/Update", in, out, opts...)
 	if err != nil {
@@ -56,7 +56,7 @@ func (c *managerClient) Update(ctx context.Context, in *Data, opts ...grpc.CallO
 	return out, nil
 }
 
-func (c *managerClient) Set(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Void, error) {
+func (c *managerClient) Set(ctx context.Context, in *Value, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
 	err := c.cc.Invoke(ctx, "/manager.Manager/Set", in, out, opts...)
 	if err != nil {
@@ -97,8 +97,8 @@ func (c *managerClient) Coordinate(ctx context.Context, in *Coord, opts ...grpc.
 // for forward compatibility
 type ManagerServer interface {
 	Heartbeat(context.Context, *Void) (*Void, error)
-	Update(context.Context, *Data) (*Void, error)
-	Set(context.Context, *Data) (*Void, error)
+	Update(context.Context, *UpdateData) (*Void, error)
+	Set(context.Context, *Value) (*Void, error)
 	Get(context.Context, *Void) (*Data, error)
 	Election(context.Context, *Elect) (*Void, error)
 	Coordinate(context.Context, *Coord) (*Void, error)
@@ -112,10 +112,10 @@ type UnimplementedManagerServer struct {
 func (UnimplementedManagerServer) Heartbeat(context.Context, *Void) (*Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Heartbeat not implemented")
 }
-func (UnimplementedManagerServer) Update(context.Context, *Data) (*Void, error) {
+func (UnimplementedManagerServer) Update(context.Context, *UpdateData) (*Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedManagerServer) Set(context.Context, *Data) (*Void, error) {
+func (UnimplementedManagerServer) Set(context.Context, *Value) (*Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
 }
 func (UnimplementedManagerServer) Get(context.Context, *Void) (*Data, error) {
@@ -159,7 +159,7 @@ func _Manager_Heartbeat_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 func _Manager_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Data)
+	in := new(UpdateData)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -171,13 +171,13 @@ func _Manager_Update_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: "/manager.Manager/Update",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).Update(ctx, req.(*Data))
+		return srv.(ManagerServer).Update(ctx, req.(*UpdateData))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Manager_Set_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Data)
+	in := new(Value)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -189,7 +189,7 @@ func _Manager_Set_Handler(srv interface{}, ctx context.Context, dec func(interfa
 		FullMethod: "/manager.Manager/Set",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).Set(ctx, req.(*Data))
+		return srv.(ManagerServer).Set(ctx, req.(*Value))
 	}
 	return interceptor(ctx, in, info, handler)
 }
