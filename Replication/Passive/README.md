@@ -1,4 +1,4 @@
-# Passive-Replication (Non-serializable & Non-linearizable)
+# Passive-Replication (not sequentially consistent & not linearisable)
 
 ## How to run
 ### Running managers
@@ -9,3 +9,13 @@
 1. Setup a terminal instance in the [frontend directory](https://github.com/2rius/DiSys-Algorithms/tree/main/Replication/Passive/frontend)
 2. Execute `go run .`. A list of commands should be printed, aswell as the message "listening on [frontends ip:port]". If multiple frontends are running, please use the `--port` flag to specify a unique port for each instance (avoid ports 5000-5002, as they are used by the managers).
 3. Enter a desired command, as explained by the terminal.
+
+## How to make sequentially consistent and/or linearisable
+Linearisable implies sequentially consistent, but sequentially consistent doesn't imply linearisable
+
+### Make sequentially consistent
+Add logical clock timestamps (Lamport/Vector) to frontends/managers.
+
+### Make linearisable
+Add synchronization algorithm (Christian's/Berkeley) to frontends/managers.
+
