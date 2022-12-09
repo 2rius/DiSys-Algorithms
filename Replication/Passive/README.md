@@ -1,4 +1,4 @@
-# Passive-Replication (not sequentially consistent & not linearisable)
+# Passive-Replication using Bully (not sequentially consistent & not linearisable)
 
 ## How to run
 ### Running managers
