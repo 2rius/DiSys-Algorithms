@@ -1,4 +1,4 @@
-# Passive-Replication
+# Passive-Replication (Non-serializable & Non-linearizable)
 
 ## How to run
 ### Running managers
