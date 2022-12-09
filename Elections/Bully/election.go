@@ -14,6 +14,16 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+type Peer struct {
+	api.UnimplementedPeerServer
+	id                string
+	peers             map[string]api.PeerClient
+	ctx               context.Context
+	primaryId         string
+	timeoutCoordinate chan bool
+	expectingAnswer   bool
+}
+
 /*
 send election to all higher IDs
 

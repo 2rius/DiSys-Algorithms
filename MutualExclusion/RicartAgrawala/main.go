@@ -10,182 +10,13 @@ import (
 	"log"
 	"net"
 	"os"
-	"sync"
-	"time"
 
 	api "github.com/2rius/DiSys-Algorithms/tree/main/MutualExclusion/RicartAgrawala/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type STATE int64
-
-const (
-	RELEASED STATE = iota
-	HELD
-	WANTED
-)
-
 var port = flag.Int("port", 5000, "port")
-
-type peer struct {
-	api.UnimplementedRicartAgrawalaServer
-	id           uint32
-	clients      map[uint32]api.RicartAgrawalaClient
-	defered      []uint32
-	ctx          context.Context
-	state        STATE
-	clock        uint32
-	requestsSent int
-	mu           sync.Mutex
-}
-
-func (p *peer) incrementClock() {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-	p.clock++
-}
-
-func (p *peer) LamportMax(x uint32) {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-	if p.clock > x {
-		p.clock++
-	} else {
-		p.clock = x + 1
-	}
-}
-
-func (p *peer) Request(ctx context.Context, req *api.Request) (*api.RequestBack, error) {
-	/*
-		I received a request from a peer
-
-		if my state is HELD or (WANTED and I have higher priority than my peer)
-			then i defer with a REPLY until later(queue)
-		else
-			I send them a REPLY right away
-	*/
-
-	log.Printf("(L: %d) RECV: Received request from %d\n", p.clock, req.Id)
-	if p.state == HELD || (p.state == WANTED && (p.clock < req.Clock || (p.clock == req.Clock && p.id > req.Id))) {
-		log.Printf("(L: %d) Deferring request from %v\n", p.clock, req.Id)
-		p.defered = append(p.defered, req.Id)
-
-		p.LamportMax(req.Clock)
-	} else {
-		if p.state == WANTED {
-			p.requestsSent++
-			p.incrementClock()
-			log.Printf("(L: %d) SEND: Rerequesting critical section to higher priority peer\n", p.clock)
-			p.clients[req.Id].Request(ctx, &api.Request{Id: p.id, Clock: p.clock})
-		}
-		p.incrementClock()
-		log.Printf("(L: %d) SEND: Sending reply right away to %v\n", p.clock, req.Id)
-		p.clients[req.Id].Reply(ctx, &api.Reply{
-			Clock: p.clock,
-			Id:    p.id,
-		})
-	}
-
-	rep := &api.RequestBack{}
-	return rep, nil
-}
-
-func (p *peer) Reply(ctx context.Context, req *api.Reply) (*api.ReplyBack, error) {
-	/*
-		I received REPLY from other peer
-
-		if i received N-1 REPLIES(1 for each Request send) then
-			i take CS(Critical Sec)
-		else
-			i wait for next reply
-	*/
-
-	p.LamportMax(req.Clock)
-
-	p.requestsSent--
-	log.Printf("(L: %d) RECV: Got a reply. Missing %d replies.\n", p.clock, p.requestsSent)
-
-	if p.requestsSent == 0 {
-		log.Printf("(L: %d) RECV: All requests replied.\n", p.clock)
-		go p.criticalSection()
-	}
-
-	rep := &api.ReplyBack{}
-	return rep, nil
-}
-
-func (p *peer) criticalSection() {
-	/*
-		I have critical section
-		When done I call sendReplyToAllDefered
-	*/
-
-	p.incrementClock()
-	log.Printf("(L: %d) CS: Started working\n", p.clock)
-	p.state = HELD
-	time.Sleep(5 * time.Second)
-	p.state = RELEASED
-	p.incrementClock()
-	log.Printf("(L: %d) CS: Done working\n", p.clock)
-
-	p.sendReplyToAllDefered()
-}
-
-func (p *peer) sendRequestToAll() {
-	p.state = WANTED
-
-	p.incrementClock()
-
-	request := &api.Request{
-		Id:    p.id,
-		Clock: p.clock,
-	}
-
-	p.requestsSent = len(p.clients)
-
-	log.Printf("(L: %d) SEND: Sending request to all peers. Missing %d replies.\n", p.clock, p.requestsSent)
-
-	for id, client := range p.clients {
-		_, err := client.Request(p.ctx, request)
-
-		if err != nil {
-			log.Printf("Something went wrong with %v\n", id)
-		}
-	}
-}
-
-func (p *peer) sendReplyToAllDefered() {
-
-	p.incrementClock()
-
-	if len(p.defered) != 0 {
-		log.Printf("(L: %d) SEND: Sending reply to all deferred peers.\n", p.clock)
-	} else {
-		log.Printf("(L: %d) SEND: No deferred peers.\n", p.clock)
-	}
-
-	reply := &api.Reply{
-		Clock: p.clock,
-		Id:    p.id,
-	}
-
-	/*
-		Reply all defered
-
-		then clear p.defered
-	*/
-
-	for _, id := range p.defered {
-		_, err := p.clients[id].Reply(p.ctx, reply)
-
-		if err != nil {
-			log.Printf("Something went wrong with %v\n", id)
-		}
-	}
-
-	p.defered = make([]uint32, 0)
-}
 
 func main() {
 	flag.Parse()
@@ -218,7 +49,7 @@ func main() {
 		break
 	}
 
-	p := &peer{
+	p := &Peer{
 		id:           port,
 		clients:      make(map[uint32]api.RicartAgrawalaClient),
 		defered:      make([]uint32, 0),
@@ -240,24 +71,24 @@ func main() {
 	}()
 
 	for i := 0; i < 3; i++ {
-		peerPort := uint32(5000 + i)
+		PeerPort := uint32(5000 + i)
 
-		if peerPort == p.id {
+		if PeerPort == p.id {
 			continue
 		}
 
 		var conn *grpc.ClientConn
-		log.Printf("Trying to dial: %v\n", peerPort)
-		conn, err := grpc.Dial(fmt.Sprintf(":%v", peerPort), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+		log.Printf("Trying to dial: %v\n", PeerPort)
+		conn, err := grpc.Dial(fmt.Sprintf(":%v", PeerPort), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 
 		if err != nil {
 			log.Fatalf("Could not connect: %s", err)
 		}
 
 		defer conn.Close()
-		log.Printf("Succes connecting to: %v\n", peerPort)
+		log.Printf("Succes connecting to: %v\n", PeerPort)
 		c := api.NewRicartAgrawalaClient(conn)
-		p.clients[peerPort] = c
+		p.clients[PeerPort] = c
 	}
 
 	log.Printf("I am connected to %d clients", len(p.clients))

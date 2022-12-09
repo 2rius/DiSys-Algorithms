@@ -15,16 +15,6 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-type Peer struct {
-	api.UnimplementedPeerServer
-	id                string
-	peers             map[string]api.PeerClient
-	ctx               context.Context
-	primaryId         string
-	timeoutCoordinate chan bool
-	expectingAnswer   bool
-}
-
 var port = flag.Int("port", 5000, "port")
 
 func main() {
