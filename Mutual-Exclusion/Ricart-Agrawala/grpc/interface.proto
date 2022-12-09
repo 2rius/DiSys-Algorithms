@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package RicartAgrawala;
+option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/Mutual-Exclusion/Ricart-Agrawala;RicartAgrawala";
+
+
+service DistributedMutualExclusion {
+    rpc request (Request) returns (RequestBack) {}
+    rpc reply (Reply) returns (ReplyBack) {}
+}
+
+message RequestBack {}
+message ReplyBack {}
+
+message Request {
+    uint32 id = 1;
+    uint32 clock = 2;
+}
+
+message Reply {
+    uint32 id = 1;
+    uint32 clock = 2;
+}
