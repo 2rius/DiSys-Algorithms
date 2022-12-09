@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package manager;
+
+option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/Replication/Passive/grpc;Passive";
+
+service Manager {
+    rpc Heartbeat (Void) returns (Void) {}
+    rpc Update (Data) returns (Void) {}
+
+    rpc Set (Data) returns (Void) {}
+    rpc Get (Void) returns (Data) {}
+
+    rpc Election (Elect) returns (Void) {}
+    rpc Coordinate (Coord) returns (Void) {}
+}
+
+service Frontend {
+    rpc Heartbeat (Primary) returns (Void) {}
+}
+
+message Elect {}
+
+message Coord {
+    uint32 id = 1;
+}
+
+message Primary {}
+
+message Data {
+    uint32 lclock = 1;
+    string a = 2;
+    string b = 3;
+    string c = 4;
+}
+
+message Void {
+    uint32 lclock = 1;
+}
