@@ -8,7 +8,7 @@ import (
 	"log"
 	"time"
 
-	api "github.com/2rius/DiSys-Algorithms/tree/main/Elections/Bully/grpc"
+	api "github.com/2rius/DiSys-Algorithms/tree/main/Elections/Bully/api"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"

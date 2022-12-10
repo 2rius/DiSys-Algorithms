@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	api "github.com/2rius/DiSys-Algorithms/tree/main/Replication/Passive/grpc"
+	api "github.com/2rius/DiSys-Algorithms/tree/main/Replication/Passive/api"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
@@ -73,16 +73,15 @@ func (m *Manager) Set(ctx context.Context, req *api.Value) (*api.Void, error) {
 func (m *Manager) SendHeartbeatToAll() {
 	log.Println("[PRIMARY] Sending heartbeat")
 
-	for _, frontendClient := range m.frontends {
+	for ip, frontendClient := range m.frontends {
 		_, err := frontendClient.Heartbeat(m.ctx, &api.Primary{})
 
 		if err != nil {
-			log.Println(err)
+			delete(m.frontends, ip)
 		}
 	}
 
 	for ip, peer := range m.peers {
-		log.Println(ip)
 		_, err := peer.Heartbeat(m.ctx, &api.Void{})
 
 		if err != nil {

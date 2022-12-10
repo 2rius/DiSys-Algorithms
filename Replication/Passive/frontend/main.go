@@ -12,7 +12,7 @@ import (
 	"os"
 	"strings"
 
-	api "github.com/2rius/DiSys-Algorithms/tree/main/Replication/Passive/grpc"
+	api "github.com/2rius/DiSys-Algorithms/tree/main/Replication/Passive/api"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"

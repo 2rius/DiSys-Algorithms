@@ -1,7 +1,7 @@
 {
-  "name": "passive",
+  "name": "lamport",
   "version": "1.0.0",
-  "description": "Passive Replication with Bully as leader election",
+  "description": "Chat, implemented with lamport clock",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

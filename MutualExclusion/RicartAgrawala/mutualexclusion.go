@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	api "github.com/2rius/DiSys-Algorithms/tree/main/MutualExclusion/RicartAgrawala/grpc"
+	api "github.com/2rius/DiSys-Algorithms/tree/main/MutualExclusion/RicartAgrawala/api"
 )
 
 type STATE int64

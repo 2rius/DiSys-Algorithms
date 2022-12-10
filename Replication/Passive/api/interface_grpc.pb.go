@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.21.6
-// source: grpc/interface.proto
+// source: api/interface.proto
 
 package Passive
 
@@ -281,7 +281,7 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "grpc/interface.proto",
+	Metadata: "api/interface.proto",
 }
 
 // FrontendClient is the client API for Frontend service.
@@ -367,5 +367,5 @@ var Frontend_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "grpc/interface.proto",
+	Metadata: "api/interface.proto",
 }

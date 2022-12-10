@@ -11,7 +11,7 @@ import (
 	"net"
 	"os"
 
-	api "github.com/2rius/DiSys-Algorithms/tree/main/MutualExclusion/RicartAgrawala/grpc"
+	api "github.com/2rius/DiSys-Algorithms/tree/main/MutualExclusion/RicartAgrawala/api"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
