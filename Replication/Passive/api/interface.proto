@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package manager;
+package passive;
 
-option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/Replication/Passive/api;Passive";
+option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/Replication/Passive/api;passive";
 
 service Manager {
     rpc Heartbeat (Void) returns (Void) {}
