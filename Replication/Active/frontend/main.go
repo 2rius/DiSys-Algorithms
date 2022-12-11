@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	api "github.com/2rius/DiSys-Algorithms/tree/main/Replication/Active/api"
@@ -16,7 +17,6 @@ import (
 
 var (
 	defaultPort   = 5000
-	ports         = flag.Args()
 	managerAmount = flag.Int("managers", 3, "managers")
 	ctx, cancel   = context.WithCancel(context.Background())
 	managers      = make(map[string]api.ManagerClient)
@@ -26,18 +26,24 @@ var (
 func main() {
 	flag.Parse()
 
+	ports := flag.Args()
+
 	defer cancel()
 
-	if len(ports) > 1 {
-		for port := range ports {
+	if len(ports) > 0 {
+		for _, portS := range ports {
+			port, err1 := strconv.Atoi(portS)
+			if err1 != nil {
+				log.Fatalf("%s illegal port\n", portS)
+			}
+
 			var conn *grpc.ClientConn
 			log.Printf("Trying to dial: %v\n", port)
 			ip := fmt.Sprintf("127.0.0.1:%d", port)
 
-			conn, err := grpc.DialContext(ctx, ip, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
-
-			if err != nil {
-				log.Fatalf("Could not connect: %s", err)
+			conn, err2 := grpc.DialContext(ctx, ip, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+			if err2 != nil {
+				log.Fatalf("Could not connect: %s", err2)
 			}
 
 			defer conn.Close()
