@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-package Lamport;
-option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/LogicalTime/Lamport/api;Lamport";
+package lamport;
+option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/LogicalTime/Lamport/api;lamport";
 
 import "google/protobuf/timestamp.proto";
 
