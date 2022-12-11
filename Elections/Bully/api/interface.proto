@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-package Bully;
-option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/Elections/Bully/api;Bully";
+package bully;
+option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/Elections/Bully/api;bully";
 
 service Peer {
     rpc Election (Elect) returns (Ack) {}
