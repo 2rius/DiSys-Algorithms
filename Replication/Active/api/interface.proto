@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package active;
+option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/Replication/Active/api;active";
+
+service Manager {
+    rpc Set (Value) returns (Void) {}
+    rpc Get (Void) returns (Data) {}
+}
+
+message Value {
+    string key = 1;
+    string value = 2;
+}
+
+message Data {
+    map<string, string> data = 1;
+}
+
+message Void {
+}
