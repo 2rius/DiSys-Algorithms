@@ -3,7 +3,7 @@ syntax = "proto3";
 package raft;
 option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/Raft/api;raft";
 
-service Manager {
+service Peer {
     rpc Heartbeat (AppendRequest) returns (AppendReply) {}
 
     rpc RequestVote (VoteRequest) returns (VoteReply) {}

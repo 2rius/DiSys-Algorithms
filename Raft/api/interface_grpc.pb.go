@@ -18,158 +18,158 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// ManagerClient is the client API for Manager service.
+// PeerClient is the client API for Peer service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ManagerClient interface {
+type PeerClient interface {
 	Heartbeat(ctx context.Context, in *AppendRequest, opts ...grpc.CallOption) (*AppendReply, error)
 	RequestVote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*VoteReply, error)
 	AppendEntries(ctx context.Context, in *AppendRequest, opts ...grpc.CallOption) (*AppendReply, error)
 }
 
-type managerClient struct {
+type peerClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewManagerClient(cc grpc.ClientConnInterface) ManagerClient {
-	return &managerClient{cc}
+func NewPeerClient(cc grpc.ClientConnInterface) PeerClient {
+	return &peerClient{cc}
 }
 
-func (c *managerClient) Heartbeat(ctx context.Context, in *AppendRequest, opts ...grpc.CallOption) (*AppendReply, error) {
+func (c *peerClient) Heartbeat(ctx context.Context, in *AppendRequest, opts ...grpc.CallOption) (*AppendReply, error) {
 	out := new(AppendReply)
-	err := c.cc.Invoke(ctx, "/raft.Manager/Heartbeat", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/raft.Peer/Heartbeat", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *managerClient) RequestVote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*VoteReply, error) {
+func (c *peerClient) RequestVote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*VoteReply, error) {
 	out := new(VoteReply)
-	err := c.cc.Invoke(ctx, "/raft.Manager/RequestVote", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/raft.Peer/RequestVote", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *managerClient) AppendEntries(ctx context.Context, in *AppendRequest, opts ...grpc.CallOption) (*AppendReply, error) {
+func (c *peerClient) AppendEntries(ctx context.Context, in *AppendRequest, opts ...grpc.CallOption) (*AppendReply, error) {
 	out := new(AppendReply)
-	err := c.cc.Invoke(ctx, "/raft.Manager/AppendEntries", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/raft.Peer/AppendEntries", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ManagerServer is the server API for Manager service.
-// All implementations must embed UnimplementedManagerServer
+// PeerServer is the server API for Peer service.
+// All implementations must embed UnimplementedPeerServer
 // for forward compatibility
-type ManagerServer interface {
+type PeerServer interface {
 	Heartbeat(context.Context, *AppendRequest) (*AppendReply, error)
 	RequestVote(context.Context, *VoteRequest) (*VoteReply, error)
 	AppendEntries(context.Context, *AppendRequest) (*AppendReply, error)
-	mustEmbedUnimplementedManagerServer()
+	mustEmbedUnimplementedPeerServer()
 }
 
-// UnimplementedManagerServer must be embedded to have forward compatible implementations.
-type UnimplementedManagerServer struct {
+// UnimplementedPeerServer must be embedded to have forward compatible implementations.
+type UnimplementedPeerServer struct {
 }
 
-func (UnimplementedManagerServer) Heartbeat(context.Context, *AppendRequest) (*AppendReply, error) {
+func (UnimplementedPeerServer) Heartbeat(context.Context, *AppendRequest) (*AppendReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Heartbeat not implemented")
 }
-func (UnimplementedManagerServer) RequestVote(context.Context, *VoteRequest) (*VoteReply, error) {
+func (UnimplementedPeerServer) RequestVote(context.Context, *VoteRequest) (*VoteReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RequestVote not implemented")
 }
-func (UnimplementedManagerServer) AppendEntries(context.Context, *AppendRequest) (*AppendReply, error) {
+func (UnimplementedPeerServer) AppendEntries(context.Context, *AppendRequest) (*AppendReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AppendEntries not implemented")
 }
-func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
+func (UnimplementedPeerServer) mustEmbedUnimplementedPeerServer() {}
 
-// UnsafeManagerServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ManagerServer will
+// UnsafePeerServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to PeerServer will
 // result in compilation errors.
-type UnsafeManagerServer interface {
-	mustEmbedUnimplementedManagerServer()
+type UnsafePeerServer interface {
+	mustEmbedUnimplementedPeerServer()
 }
 
-func RegisterManagerServer(s grpc.ServiceRegistrar, srv ManagerServer) {
-	s.RegisterService(&Manager_ServiceDesc, srv)
+func RegisterPeerServer(s grpc.ServiceRegistrar, srv PeerServer) {
+	s.RegisterService(&Peer_ServiceDesc, srv)
 }
 
-func _Manager_Heartbeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Peer_Heartbeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AppendRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ManagerServer).Heartbeat(ctx, in)
+		return srv.(PeerServer).Heartbeat(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/raft.Manager/Heartbeat",
+		FullMethod: "/raft.Peer/Heartbeat",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).Heartbeat(ctx, req.(*AppendRequest))
+		return srv.(PeerServer).Heartbeat(ctx, req.(*AppendRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_RequestVote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Peer_RequestVote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VoteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ManagerServer).RequestVote(ctx, in)
+		return srv.(PeerServer).RequestVote(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/raft.Manager/RequestVote",
+		FullMethod: "/raft.Peer/RequestVote",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).RequestVote(ctx, req.(*VoteRequest))
+		return srv.(PeerServer).RequestVote(ctx, req.(*VoteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_AppendEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Peer_AppendEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AppendRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ManagerServer).AppendEntries(ctx, in)
+		return srv.(PeerServer).AppendEntries(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/raft.Manager/AppendEntries",
+		FullMethod: "/raft.Peer/AppendEntries",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).AppendEntries(ctx, req.(*AppendRequest))
+		return srv.(PeerServer).AppendEntries(ctx, req.(*AppendRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Manager_ServiceDesc is the grpc.ServiceDesc for Manager service.
+// Peer_ServiceDesc is the grpc.ServiceDesc for Peer service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Manager_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "raft.Manager",
-	HandlerType: (*ManagerServer)(nil),
+var Peer_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "raft.Peer",
+	HandlerType: (*PeerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Heartbeat",
-			Handler:    _Manager_Heartbeat_Handler,
+			Handler:    _Peer_Heartbeat_Handler,
 		},
 		{
 			MethodName: "RequestVote",
-			Handler:    _Manager_RequestVote_Handler,
+			Handler:    _Peer_RequestVote_Handler,
 		},
 		{
 			MethodName: "AppendEntries",
-			Handler:    _Manager_AppendEntries_Handler,
+			Handler:    _Peer_AppendEntries_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
