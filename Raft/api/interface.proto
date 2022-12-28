@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package raft;
+option go_package = "https://github.com/2rius/DiSys-Algorithms/tree/main/Raft/api;raft";
+
+service Manager {
+    rpc Heartbeat (AppendRequest) returns (AppendReply) {}
+
+    rpc RequestVote (VoteRequest) returns (VoteReply) {}
+
+    rpc AppendEntries (AppendRequest) returns (AppendReply) {}
+}
+
+message VoteRequest {
+    int32 term = 1;
+    int32 cId = 2;
+    int32 lastLogIndex = 3;
+    int32 lastLogTerm = 4;
+}
+
+message VoteReply {
+    int32 term = 1;
+    bool voteGranted = 2;
+    int32 voterId = 3;
+}
+
+message AppendRequest {
+    int32 term = 1;
+    int32 leaderId = 2;
+    int32 prevLogIndex = 3;
+    int32 prevLogTerms = 4;
+    repeated LogEntry entries = 5;
+}
+
+message AppendReply {
+    int32 term = 1;
+    bool success = 2;
+}
+
+message LogEntry {
+    int32 term = 1;
+    string command = 2;
+}
