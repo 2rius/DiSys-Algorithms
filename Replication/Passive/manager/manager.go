@@ -63,9 +63,9 @@ func (m *Manager) Set(ctx context.Context, req *api.Value) (*api.Void, error) {
 		m.frontends[addr] = c
 	}
 
-	m.data[req.Key] = req.Value
-
 	m.UpdatePeers(req)
+
+	m.data[req.Key] = req.Value
 
 	rep := &api.Void{}
 
@@ -137,14 +137,23 @@ func (m *Manager) UpdatePeers(req *api.Value) error {
 		ips = append(ips, k)
 	}
 
-	for _, client := range m.peers {
-		client.Update(m.ctx, &api.UpdateData{
-			Key:       req.Key,
-			Value:     req.Value,
-			Frontends: ips,
-		})
+	for ip, client := range m.peers {
+		attempts := 0
+		for {
+			_, err := client.Update(m.ctx, &api.UpdateData{
+				Key:       req.Key,
+				Value:     req.Value,
+				Frontends: ips,
+			})
+			if err == nil {
+				break
+			} else if attempts == 3 {
+				delete(m.peers, ip)
+				break
+			}
+			attempts++
+		}
 	}
-
 	return nil
 }
 
