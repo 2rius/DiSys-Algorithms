@@ -165,7 +165,15 @@ func (m *Manager) Coordinate(ctx context.Context, in *api.Coord) (*api.Void, err
 	if wasLeader {
 		log.Println("[OLD LEADER] I will update new leader with my data as the old leader")
 
-		// [TODO] send data to new leader
+		ips := make([]string, 0, len(m.frontends))
+		for k := range m.frontends {
+			ips = append(ips, k)
+		}
+
+		m.peers[addr].UpdateLeader(m.ctx, &api.UpdateLeaderData{
+			Data:      m.data,
+			Frontends: ips,
+		})
 	}
 
 	return &api.Void{}, nil

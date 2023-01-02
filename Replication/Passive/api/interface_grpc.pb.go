@@ -4,7 +4,7 @@
 // - protoc             v3.21.6
 // source: api/interface.proto
 
-package Passive
+package passive
 
 import (
 	context "context"
@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type ManagerClient interface {
 	Heartbeat(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Void, error)
 	Update(ctx context.Context, in *UpdateData, opts ...grpc.CallOption) (*Void, error)
+	UpdateLeader(ctx context.Context, in *UpdateLeaderData, opts ...grpc.CallOption) (*Void, error)
 	Set(ctx context.Context, in *Value, opts ...grpc.CallOption) (*Void, error)
 	Get(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Data, error)
 	Election(ctx context.Context, in *Elect, opts ...grpc.CallOption) (*Void, error)
@@ -40,7 +41,7 @@ func NewManagerClient(cc grpc.ClientConnInterface) ManagerClient {
 
 func (c *managerClient) Heartbeat(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
-	err := c.cc.Invoke(ctx, "/manager.Manager/Heartbeat", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/passive.Manager/Heartbeat", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +50,16 @@ func (c *managerClient) Heartbeat(ctx context.Context, in *Void, opts ...grpc.Ca
 
 func (c *managerClient) Update(ctx context.Context, in *UpdateData, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
-	err := c.cc.Invoke(ctx, "/manager.Manager/Update", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/passive.Manager/Update", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managerClient) UpdateLeader(ctx context.Context, in *UpdateLeaderData, opts ...grpc.CallOption) (*Void, error) {
+	out := new(Void)
+	err := c.cc.Invoke(ctx, "/passive.Manager/UpdateLeader", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +68,7 @@ func (c *managerClient) Update(ctx context.Context, in *UpdateData, opts ...grpc
 
 func (c *managerClient) Set(ctx context.Context, in *Value, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
-	err := c.cc.Invoke(ctx, "/manager.Manager/Set", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/passive.Manager/Set", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +77,7 @@ func (c *managerClient) Set(ctx context.Context, in *Value, opts ...grpc.CallOpt
 
 func (c *managerClient) Get(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Data, error) {
 	out := new(Data)
-	err := c.cc.Invoke(ctx, "/manager.Manager/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/passive.Manager/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +86,7 @@ func (c *managerClient) Get(ctx context.Context, in *Void, opts ...grpc.CallOpti
 
 func (c *managerClient) Election(ctx context.Context, in *Elect, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
-	err := c.cc.Invoke(ctx, "/manager.Manager/Election", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/passive.Manager/Election", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +95,7 @@ func (c *managerClient) Election(ctx context.Context, in *Elect, opts ...grpc.Ca
 
 func (c *managerClient) Coordinate(ctx context.Context, in *Coord, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
-	err := c.cc.Invoke(ctx, "/manager.Manager/Coordinate", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/passive.Manager/Coordinate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -98,6 +108,7 @@ func (c *managerClient) Coordinate(ctx context.Context, in *Coord, opts ...grpc.
 type ManagerServer interface {
 	Heartbeat(context.Context, *Void) (*Void, error)
 	Update(context.Context, *UpdateData) (*Void, error)
+	UpdateLeader(context.Context, *UpdateLeaderData) (*Void, error)
 	Set(context.Context, *Value) (*Void, error)
 	Get(context.Context, *Void) (*Data, error)
 	Election(context.Context, *Elect) (*Void, error)
@@ -114,6 +125,9 @@ func (UnimplementedManagerServer) Heartbeat(context.Context, *Void) (*Void, erro
 }
 func (UnimplementedManagerServer) Update(context.Context, *UpdateData) (*Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedManagerServer) UpdateLeader(context.Context, *UpdateLeaderData) (*Void, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateLeader not implemented")
 }
 func (UnimplementedManagerServer) Set(context.Context, *Value) (*Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
@@ -150,7 +164,7 @@ func _Manager_Heartbeat_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/manager.Manager/Heartbeat",
+		FullMethod: "/passive.Manager/Heartbeat",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).Heartbeat(ctx, req.(*Void))
@@ -168,10 +182,28 @@ func _Manager_Update_Handler(srv interface{}, ctx context.Context, dec func(inte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/manager.Manager/Update",
+		FullMethod: "/passive.Manager/Update",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).Update(ctx, req.(*UpdateData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Manager_UpdateLeader_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateLeaderData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).UpdateLeader(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/passive.Manager/UpdateLeader",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).UpdateLeader(ctx, req.(*UpdateLeaderData))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -186,7 +218,7 @@ func _Manager_Set_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/manager.Manager/Set",
+		FullMethod: "/passive.Manager/Set",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).Set(ctx, req.(*Value))
@@ -204,7 +236,7 @@ func _Manager_Get_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/manager.Manager/Get",
+		FullMethod: "/passive.Manager/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).Get(ctx, req.(*Void))
@@ -222,7 +254,7 @@ func _Manager_Election_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/manager.Manager/Election",
+		FullMethod: "/passive.Manager/Election",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).Election(ctx, req.(*Elect))
@@ -240,7 +272,7 @@ func _Manager_Coordinate_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/manager.Manager/Coordinate",
+		FullMethod: "/passive.Manager/Coordinate",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).Coordinate(ctx, req.(*Coord))
@@ -252,7 +284,7 @@ func _Manager_Coordinate_Handler(srv interface{}, ctx context.Context, dec func(
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Manager_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "manager.Manager",
+	ServiceName: "passive.Manager",
 	HandlerType: (*ManagerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -262,6 +294,10 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Update",
 			Handler:    _Manager_Update_Handler,
+		},
+		{
+			MethodName: "UpdateLeader",
+			Handler:    _Manager_UpdateLeader_Handler,
 		},
 		{
 			MethodName: "Set",
@@ -301,7 +337,7 @@ func NewFrontendClient(cc grpc.ClientConnInterface) FrontendClient {
 
 func (c *frontendClient) Heartbeat(ctx context.Context, in *Primary, opts ...grpc.CallOption) (*Void, error) {
 	out := new(Void)
-	err := c.cc.Invoke(ctx, "/manager.Frontend/Heartbeat", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/passive.Frontend/Heartbeat", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -346,7 +382,7 @@ func _Frontend_Heartbeat_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/manager.Frontend/Heartbeat",
+		FullMethod: "/passive.Frontend/Heartbeat",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(FrontendServer).Heartbeat(ctx, req.(*Primary))
@@ -358,7 +394,7 @@ func _Frontend_Heartbeat_Handler(srv interface{}, ctx context.Context, dec func(
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Frontend_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "manager.Frontend",
+	ServiceName: "passive.Frontend",
 	HandlerType: (*FrontendServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

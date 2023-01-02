@@ -1,5 +1,7 @@
 package main
 
+// From assignment 5
+
 import (
 	"context"
 	"log"
@@ -153,6 +155,29 @@ func (m *Manager) Update(ctx context.Context, req *api.UpdateData) (*api.Void, e
 	log.Println("I'm getting updated to latest info!")
 
 	m.data[req.Key] = req.Value
+
+	for _, ip := range req.Frontends {
+		conn, err := grpc.DialContext(ctx, ip, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+
+		if err != nil {
+			continue
+		}
+
+		c := api.NewFrontendClient(conn)
+
+		m.frontends[ip] = c
+	}
+
+	return &api.Void{}, nil
+}
+
+/*
+Update data from old primary
+*/
+func (m *Manager) UpdateLeader(ctx context.Context, req *api.UpdateLeaderData) (*api.Void, error) {
+	log.Println("I'm getting updated to latest info by old leader!")
+
+	m.data = req.Data
 
 	for _, ip := range req.Frontends {
 		conn, err := grpc.DialContext(ctx, ip, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
